@@ -6,11 +6,12 @@
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 #include <functional>
+
 #include "switch.h"
 #include "UpnpBroadcastResponder.h"
 #include "CallbackFunction.h"
-#include "witty.h"
-#include "wemoswitch.h"
+#include "Witty.h"
+#include "WeMoSwitch.h"
 #include "WebServer.h"
 
 Witty wittyB;

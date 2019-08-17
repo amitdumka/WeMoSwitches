@@ -1,11 +1,13 @@
 #ifndef WITTY_H
 #define WITTY_H
+#include "WeMo.h"
 #include <functional>
 
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <WiFiUDP.h>
+
 
 #include "CallbackFunction.h"
 // By Amit Kumar
@@ -25,11 +27,8 @@ public:
   // Change this before you flash
   //TODO: making then can set by web page , api or app
 
-  const char *ssid = "AmitKr";
-  const char *password = "12345678";
-
-  const char *host = "Amit_IOT";
   static bool wifiConnected;
+ 
   bool connectWifi();
 
   void InitWitty();

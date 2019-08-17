@@ -22,6 +22,7 @@ WeMoSwitch::WeMoSwitch(Witty b)
   wifiConnected = wittyB.wifiConnected;
   if (!wifiConnected)
     Serial.println("WifiConnected is False");
+
 }
 
 WeMoSwitch::WeMoSwitch(Witty b, WebServer s)
