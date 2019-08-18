@@ -10,10 +10,11 @@ public:
     static const String Activation_Code;
 
     static const int NoOfRelay = 4;
+
     static int RelayStatus[NoOfRelay];
     static int RelayPins[NoOfRelay];
     static String RelayNames[NoOfRelay];
-
+    static bool isRelayOn[NoOfRelay];
     static int RelayPort[NoOfRelay]; //For Alexa Support;
 
     //Witty Cloud Config
@@ -37,6 +38,7 @@ public:
     static const int StartPort = 81;
     static const int LastPort = 90; //Max Switch /Replay can be handle by Alexa WeMos
     
+    //static void Config();
 };
 
 #endif

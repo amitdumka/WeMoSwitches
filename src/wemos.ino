@@ -29,7 +29,7 @@ void setup()
 
   webServer = new WebServer(80);
   webServer->StartWebServer();
-  
+
   weMo->initWemoSwitch();
   Serial.println("Wemos Switch init done");
 
@@ -52,18 +52,8 @@ void loop()
   {
     Serial.println("Button is pressed...");
     delay(200);
-    Serial.println("Reconnecting Wifi....");
-    wittyB.ReconnectWifi();
+    Serial.println("Reseting device....");
+    wittyB.ResetDevice();
     delay(200);
-    //TODO: where first need to delete the ref then call init function
-    Serial.println("Reconnecting Switch....");
-    delete weMo;
-    if (weMo == NULL)
-      weMo = new WeMoSwitch(wittyB);
-    weMo->initWemoSwitch();
-
-    //delay(2000);
   }
 }
-
-

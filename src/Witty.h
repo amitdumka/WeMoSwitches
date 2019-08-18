@@ -8,7 +8,6 @@
 #include <ESP8266WebServer.h>
 #include <WiFiUDP.h>
 
-
 #include "CallbackFunction.h"
 // By Amit Kumar
 
@@ -20,6 +19,7 @@ public:
   static const int RedLed;
   static const int GreenLed;
   static const int BlueLed;
+
   static int btn_Status;
 
   //Wifi Connection
@@ -28,7 +28,7 @@ public:
   //TODO: making then can set by web page , api or app
 
   static bool wifiConnected;
- 
+
   bool connectWifi();
 
   void InitWitty();

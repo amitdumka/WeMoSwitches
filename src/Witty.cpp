@@ -60,14 +60,10 @@ bool Witty::setLedColor(int r, int g, int b)
 
 bool Witty::connectWifi()
 {
-  
- 
   boolean state = true;
   int i = 0;
   WiFi.mode(WeMo::WiFiMode);
-
-  WiFi.begin(WeMo::SSID,WeMo::password);
-  Serial.println("");
+  WiFi.begin(WeMo::SSID, WeMo::password);
   Serial.println("Connecting to WiFi");
 
   // Wait for connection
@@ -93,6 +89,7 @@ bool Witty::connectWifi()
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
     digitalWrite(GreenLed, HIGH);
+    digitalWrite(RedLed, LOW);
   }
   else
   {
@@ -118,7 +115,8 @@ bool Witty::HandelButton(CallbackFunction cb)
 bool Witty::ResetDevice()
 {
   //TODO: add code to reset device.
-  ESP.restart();
+  //ESP.restart();
+  ESP.reset();
   return true;
 }
 
