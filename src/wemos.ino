@@ -45,8 +45,7 @@ void setup()
 void loop()
 {
   MDNS.update();
-  // WiFiClient client = webServer->server->available(); // Listen for incoming clients
-  webServer->IndexPage();
+  webServer->IndexPage();// WebServer
   weMo->wemoSwitchLoop();
   if (wittyB.isButtonPressed() == LOW)
   {

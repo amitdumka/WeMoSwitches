@@ -24,7 +24,7 @@ public:
     static const int GreenLed = D6;
     static const int BlueLed = D7;
 
-    static const int InBuilt_Led = D4;
+    static const int InBuilt_Led = D4; // Led at esp 12 chip  and Inbuilt nodemcu is at D0 or gpio 16
 
     static const char *SSID;
     static  const char *password;
