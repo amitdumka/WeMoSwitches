@@ -28,6 +28,8 @@ static bool SwitchOff(int);
   bool initWemoSwitch();
   void wemoSwitchLoop();
 
+ 
+
   //Constructor and Destructor
   WeMoSwitch();
   ~WeMoSwitch();

@@ -81,3 +81,7 @@ bool WeMoSwitch::SwitchOn(int index)
   saveRelayConfiguration(WeMo::RelayNames[index], 1, WeMo::RelayNames[index] + index, true);
   return WeMo::isRelayOn[index];
 }
+
+
+
+
