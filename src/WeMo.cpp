@@ -114,6 +114,8 @@ void WeMo::SetUpRelaySwitch()
     {
         pinMode(WeMo::RelayPins[i], OUTPUT);
     }
+    
+    pinMode(WeMo::InBuilt_Led,OUTPUT);//InBuilt LED  D4/02 ESP12
 }
 #ifdef RetroSwitch
 //Setup Input pin mode Check for uses and way

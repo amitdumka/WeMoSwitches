@@ -17,8 +17,8 @@ private:
     static const int MaxInputPin = 4;   
     static const int MaxOutPutPin = 4;
 
-    static int InputSwitchList[MaxInputPin]; //={34,35,35,39,27,16,17,12};
-    static int RelayPinList[MaxOutPutPin];   //=   {32,33,25,26,21,22,04,02};
+    static int InputSwitchList[MaxInputPin]; 
+    static int RelayPinList[MaxOutPutPin];   
 
 public:
     void Setup();
