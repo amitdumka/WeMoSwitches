@@ -6,8 +6,6 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <Bounce2.h>
-#include <DHT.h>
 #include <string.h>
 
 // MQTT
@@ -30,22 +28,28 @@ private:
     static String MQTT_UserName;
     static String MQTT_Password;
     static String MQTT_Client_ID;
+    long lastReconnectAttempt = 0;
+
 
     WiFiClient espClient;
     PubSubClient client;
+
     // Basic Topic
     //topic to subscribe to request for software version (Generic Device, MAC Addr, Filename.ino)
     const char *swVerTopic = "/MQTT_Client_ID/SwVerCommand";
     char swVerThisDeviceTopic[50];
+
     //topic to publish request for software version
     const char *swVerConfirmTopic = "/MQTT_Client_ID/SwVerConfirm";
+
     String clientName;
-    const char *THIS_GENERIC_DEVICE = "esp8266";
+    const char *THIS_GENERIC_DEVICE = "esp8266"; //TODO: This need to be set Based on Board Select. Need to be implemented
     String swVersion;
 
     String macToStr(const uint8_t *mac);
 
 public:
+
     MQTT_Client();
     MQTT_Client(String host);
     MQTT_Client(String host, int port);
@@ -53,8 +57,18 @@ public:
 
     void SetUp(MQTT_Handler handler);
     void Loop();
+    void LoopMQTT();
     void Connect();
-    bool BasicHandler(); // Must be called on callback Handler. Other wise it can fail.
+    boolean reconnect();
+    bool BasicHandler(String topic); //TODO: Must be called on callback Handler. Other wise it can fail.
+
+    void Publish(const char * topic, const char * payload);
+    void Subscribe(const char * topic);
+
+    //Array List Subricptions
+    void Subscribe(String topicList[]); // Any String array need to pass and formate the subscribtion part.
+    
+
 };
 
 #endif
@@ -66,7 +80,8 @@ void MQTT_Client::SetUp(MQTT_Handler handler)
     client = PubSubClient(espClient);
     client.setServer(CONFIG_MQTT_HOST, CONFIG_MQTT_PORT);
 
-    client.setCallback(handler); // Generate client name based on MAC address and last 8 bits of microsecond counter
+    client.setCallback(handler);
+    // Generate client name based on MAC address and last 8 bits of microsecond counter
 
     clientName = THIS_GENERIC_DEVICE;
     clientName += '-';
@@ -74,12 +89,11 @@ void MQTT_Client::SetUp(MQTT_Handler handler)
     WiFi.macAddress(mac);
     clientName += macToStr(mac);
 
-    sprintf(swVerThisDeviceTopic, "/WiFiDevice/%s/SwVerCommand", macToStr(mac).c_str());
+    sprintf(swVerThisDeviceTopic, "/MQTT_Client_ID/%s/SwVerCommand", macToStr(mac).c_str());
 
     swVersion = THIS_GENERIC_DEVICE;
     swVersion += ',';
     swVersion += macToStr(mac);
-    swVersion += ',';
 
     Serial.print("Client Name : ");
     Serial.println(clientName);
@@ -114,66 +128,26 @@ void MQTT_Client::Loop()
     //checkTemperatureAndHumidity();
 }
 
-void callback(char *topic, byte *payload, unsigned int length)
+bool MQTT_Client::BasicHandler(String topicStr)
 {
-    // callback function need to think over
 
-    //convert topic to string to make it easier to work with
-    String topicStr = topic;
+    if ((String)swVerTopic == topicStr)
+    {
+        client.publish(swVerConfirmTopic, swVersion.c_str());
+        return true;
+    }
 
-    //Print out some debugging info
-    Serial.println("Callback update.");
-    Serial.print("Topic: ");
-    Serial.println(topicStr);
-
-    // if (strcmp(lightTopic, topic) == 0)
-    // {
-    //     if (payload[0] == '1')
-    //     { //turn the light on if the payload is '1' and publish the confirmation
-    //         digitalWrite(lightPin, LOW);
-    //         client.publish(lightConfirmTopic, "On");
-    //     }
-    //     else if (payload[0] == '0')
-    //     { //turn the light off if the payload is '0' and publish the confirmation
-    //         digitalWrite(lightPin, HIGH);
-    //         client.publish(lightConfirmTopic, "Off");
-    //     }
-    //     else
-    //     {
-    //         client.publish(lightConfirmTopic, "Err");
-    //     }
-    //     return;
-    // }
-
-    // if (strcmp(buttonStatusTopic, topic) == 0)
-    // {
-    //     if (isOn == true)
-    //     {
-    //         client.publish(buttonTopic, "Pressed");
-    //     }
-    //     else
-    //     {
-    //         client.publish(buttonTopic, "Released");
-    //     }
-    //     return;
-    // }
-
-    // if (strcmp(swVerTopic, topic) == 0)
-    // {
-    //     client.publish(swVerConfirmTopic, swVersion.c_str());
-    //     return;
-    // }
-
-    // if (strcmp(swVerThisDeviceTopic, topic) == 0)
-    // {
-    //     client.publish(swVerConfirmTopic, swVersion.c_str());
-    //     return;
-    // }
+    if ((String)swVerThisDeviceTopic == topicStr)
+    {
+        client.publish(swVerConfirmTopic, swVersion.c_str());
+        return true;
+    }
+    return false;
 }
 
 //generate unique name from MAC addr
 String MQTT_Client::macToStr(const uint8_t *mac)
-{
+{ //TODO: Need to move to Lib part so can used any where
 
     String result;
 
@@ -191,73 +165,13 @@ String MQTT_Client::macToStr(const uint8_t *mac)
 
     return result;
 }
-
-void checkTemperatureAndHumidity(void)
+void MQTT_Client::Subscribe(const char * topic) { client.subscribe(topic); }
+void MQTT_Client::Publish(const char * topic, const char * payload)
 {
-    WiFiClient espClient;
-    PubSubClient client(espClient);
-    String s1;
-    const char *temperatureTopic="";
-    const char *humidityTopic="", *heatIndexTopic="";
-    unsigned long previousMillis, readInterval; //,currentMillis;
-    DHT dht(2, DHT22);
-    float humidity_new, temp_c_new, hic_new, temp_c_old, humidity_old, hic_old, heatIndexTopic;
-    // Wait at least 2 seconds seconds between measurements.
-    // if the difference between the current time and last time you read
-    // the sensor is bigger than the interval you set, read the sensor
-    // Works better than delay for things happening elsewhere also
-    unsigned long currentMillis = millis();
-
-    if (currentMillis - previousMillis >= readInterval)
-    {
-        // save the last time you read the sensor
-        previousMillis = currentMillis;
-
-        // Reading temperature for humidity takes about 250 milliseconds!
-        // Sensor readings may also be up to 2 seconds 'old' (it's a very slow sensor)
-        humidity_new = dht.readHumidity();                               // Read humidity (percent)
-        temp_c_new = dht.readTemperature();                              // Read temperature as Centigrade
-        hic_new = dht.computeHeatIndex(temp_c_new, humidity_new, false); // Compute heat index in Celsius
-        // Check if any reads failed and exit early (to try again).
-        if (isnan(humidity_new) || isnan(temp_c_new))
-        {
-            Serial.println("Failed to read from DHT sensor!");
-            return;
-        }
-
-        if (temp_c_new != temp_c_old)
-        {
-            s1 = String(temp_c_new);
-            client.publish(temperatureTopic, s1.c_str());
-            temp_c_old = temp_c_new;
-        }
-
-        if (humidity_new != humidity_old)
-        {
-            s1 = String(humidity_new);
-            client.publish(humidityTopic, s1.c_str());
-            humidity_old = humidity_new;
-        }
-
-        if (hic_new != hic_old)
-        {
-            s1 = String(hic_new);
-            client.publish(heatIndexTopic, s1.c_str());
-            hic_old = hic_new;
-        }
-
-        Serial.print("Humidity: ");
-        Serial.print(humidity_new);
-        Serial.print(" %\t");
-        Serial.print("Temperature: ");
-        Serial.print(temp_c_new);
-        Serial.print(" *C ");
-        Serial.print("Heat index: ");
-        Serial.print(hic_new);
-        Serial.println(" *C");
-    }
+    client.publish(topic, payload);
 }
 
+//TODO: Make it sure it is non Blocking and Aysnc Mode
 void MQTT_Client::Connect()
 {
 
@@ -268,24 +182,13 @@ void MQTT_Client::Connect()
         while (!client.connected())
         {
             Serial.print("Attempting MQTT connection...");
-
             //if connected, subscribe to the topic(s) we want to be notified about
             if (client.connect((char *)clientName.c_str()))
             {
                 Serial.print("\tMTQQ Connected");
-                //client.publish(swVerConfirmTopic, "Connected");
-                //client.publish(lightConfirmTopic, "Connected");
                 client.publish(swVerConfirmTopic, swVersion.c_str());
-                //client.publish(buttonTopic, "Connected");
                 client.subscribe(swVerThisDeviceTopic);
                 client.subscribe(swVerTopic);
-
-                //client.subscribe(buttonStatusTopic);
-                //client.subscribe(lightTopic);
-                //
-                //client.publish(temperatureTopic, "Connected");
-                //client.publish(humidityTopic, "Connected");
-                //client.publish(heatIndexTopic, "Connected");
             }
 
             //otherwise print failed for debugging
@@ -296,4 +199,35 @@ void MQTT_Client::Connect()
             }
         }
     }
+}
+
+
+void MQTT_Client::LoopMQTT()
+{
+  if (!client.connected()) {
+    long now = millis();
+    if (now - lastReconnectAttempt > 5000) {
+      lastReconnectAttempt = now;
+      // Attempt to reconnect
+      if (reconnect()) {
+        lastReconnectAttempt = 0;
+      }
+    }
+  } else {
+    // Client connected
+
+    client.loop();
+  }
+
+}
+
+
+boolean MQTT_Client::reconnect() {
+  if (client.connect("arduinoClient")) {
+    // Once connected, publish an announcement...
+    client.publish("outTopic","hello world");
+    // ... and resubscribe
+    client.subscribe("inTopic");
+  }
+  return client.connected();
 }
