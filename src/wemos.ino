@@ -10,7 +10,7 @@
 #include "Config.h"
 #ifdef MQTT
 //#include "mqttserver.h"
-#include "Async_MQTT_Server.h"
+//#include "Async_MQTT_Server.h"
 #endif
 
 #ifdef WEBSERVER

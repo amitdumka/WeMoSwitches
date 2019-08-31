@@ -8,5 +8,5 @@
 #define RetroSwitch ; // To be Used with old/ exisiting wiring
 #define MQTT ;        // Enbaling MQTT
 #define WEBAPI ;      // Enabling WebApi to control Switches and board .. In version 2.0
-
+#define ASYNC_TCP_SSL_ENABLED  1 //  SSL MQT
 // Config ends here

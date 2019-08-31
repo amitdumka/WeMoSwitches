@@ -18,45 +18,59 @@ extern "C"
 }
 #endif
 
-#define MQTT_HOST IPAddress(192, 168, 1, 10)
+#if ASYNC_TCP_SSL_ENABLED
+#define MQTT_SECURE true
+#define MQTT_SERVER_FINGERPRINT                                                                                                \
+    {                                                                                                                          \
+        0x7e, 0x36, 0x22, 0x01, 0xf9, 0x7e, 0x99, 0x2f, 0xc5, 0xdb, 0x3d, 0xbe, 0xac, 0x48, 0x67, 0x5b, 0x5d, 0x47, 0x94, 0xd2 \
+    }
+#define MQTT_PORT 8883
+#else
 #define MQTT_PORT 1883
+#endif
+
+
+#define MQTT_HOST IPAddress(192, 168, 1, 10)
+//#define MQTT_PORT 1883
 
 class Async_MQTT
 {
-    AsyncMqttClient mqttClient;
-    WiFiEventHandler wifiConnectHandler;
-    WiFiEventHandler wifiDisconnectHandler;
+private:
+    static AsyncMqttClient mqttClient;
+    static WiFiEventHandler wifiConnectHandler;
+    static WiFiEventHandler wifiDisconnectHandler;
 
 #ifdef NODEMCU
-    Ticker mqttReconnectTimer;
-    Ticker wifiReconnectTimer;
+    static Ticker mqttReconnectTimer;
+    static Ticker wifiReconnectTimer;
 
 #endif
 
 #ifdef ESP32
-    TimerHandle_t mqttReconnectTimer;
-    TimerHandle_t wifiReconnectTimer;
+    static TimerHandle_t mqttReconnectTimer;
+    static TimerHandle_t wifiReconnectTimer;
 #endif
 
+    static void onWifiConnect(const WiFiEventStationModeGotIP &event);
+    static void onWifiDisconnect(const WiFiEventStationModeDisconnected &event);
+
+    static void connectToMqtt();
+    static void connectToWifi();
+
+    static void onMqttPublish(uint16_t packetId);
+    static void onMqttConnect(bool sessionPresent);
+    static void onMqttDisconnect(AsyncMqttClientDisconnectReason reason);
+    static void onMqttSubscribe(uint16_t packetId, uint8_t qos);
+    static void onMqttUnsubscribe(uint16_t packetId);
+    static void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total);
+
+#ifdef ESP32
+    static void WiFiEvent(WiFiEvent_t event);
+#endif
 public:
-void mqtt_loop();
-void mqtt_setup();
-
-void onWifiConnect(const WiFiEventStationModeGotIP &event);
-void onWifiDisconnect(const WiFiEventStationModeDisconnected &event);
-
-void connectToMqtt();
-
-void connectToWifi();
-void onMqttPublish(uint16_t packetId);
-void onMqttConnect(bool sessionPresent);
-void onMqttDisconnect(AsyncMqttClientDisconnectReason reason);
-void onMqttSubscribe(uint16_t packetId, uint8_t qos);
-void onMqttUnsubscribe(uint16_t packetId);
-void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total);
-
-
+    void l() {}
+    void mqtt_loop();
+    void mqtt_setup();
 };
-
 
 #endif

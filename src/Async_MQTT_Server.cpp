@@ -18,15 +18,16 @@ void Async_MQTT::onWifiDisconnect(const WiFiEventStationModeDisconnected &event)
 {
     Serial.println("Disconnected from Wi-Fi.");
     mqttReconnectTimer.detach(); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
-    float s = 2;
-    wifiReconnectTimer.once(s, this->connectToWifi);
+    wifiReconnectTimer.once(2, connectToWifi);
 }
+
 //TODO: Impelemetation check
 void Async_MQTT::connectToMqtt()
 {
     Serial.println("Connecting to MQTT...");
     mqttClient.connect();
-}//TODO: Impelemetation check
+}
+//TODO: Impelemetation check
 void Async_MQTT::onMqttConnect(bool sessionPresent)
 {
     Serial.println("Connected to MQTT.");
@@ -44,14 +45,26 @@ void Async_MQTT::onMqttConnect(bool sessionPresent)
     Serial.print("Publishing at QoS 2, packetId: ");
     Serial.println(packetIdPub2);
 }
+
 //TODO: Impelemetation check
 void Async_MQTT::onMqttDisconnect(AsyncMqttClientDisconnectReason reason)
 {
     Serial.println("Disconnected from MQTT.");
 
+    if (reason == AsyncMqttClientDisconnectReason::TLS_BAD_FINGERPRINT)
+    {
+        Serial.println("Bad server fingerprint.");
+    }
+
     if (WiFi.isConnected())
     {
-        mqttReconnectTimer.once(2, this->connectToMqtt);
+#ifdef NODEMCU
+        mqttReconnectTimer.once(2, connectToMqtt);
+#endif
+
+#ifdef ESP32
+        xTimerStart(mqttReconnectTimer, 0);
+#endif
     }
 }
 //TODO: Impelemetation check
@@ -105,17 +118,36 @@ void Async_MQTT::mqtt_setup()
     Serial.println();
     Serial.println();
 
-    wifiConnectHandler = WiFi.onStationModeGotIP(this->onWifiConnect);
-    wifiDisconnectHandler = WiFi.onStationModeDisconnected(this->onWifiDisconnect);
+#ifdef ESP32
+    WiFi.onEvent(WiFiEvent);
+    mqttReconnectTimer = xTimerCreate("mqttTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToMqtt));
+    wifiReconnectTimer = xTimerCreate("wifiTimer", pdMS_TO_TICKS(2000), pdFALSE, (void *)0, reinterpret_cast<TimerCallbackFunction_t>(connectToWifi));
 
-    mqttClient.onConnect(this->onMqttConnect);
-    mqttClient.onDisconnect(this->onMqttDisconnect);
-    mqttClient.onSubscribe(this->onMqttSubscribe);
-    mqttClient.onUnsubscribe(this->onMqttUnsubscribe);
-    mqttClient.onMessage(this->onMqttMessage);
-    mqttClient.onPublish(this->onMqttPublish);
+#endif
+#ifdef NODEMCU
+    wifiConnectHandler = WiFi.onStationModeGotIP(onWifiConnect);
+    wifiDisconnectHandler = WiFi.onStationModeDisconnected(onWifiDisconnect);
+
+#endif
+
+    mqttClient.onConnect(onMqttConnect);
+    mqttClient.onDisconnect(onMqttDisconnect);
+    mqttClient.onSubscribe(onMqttSubscribe);
+    mqttClient.onUnsubscribe(onMqttUnsubscribe);
+    mqttClient.onMessage(onMqttMessage);
+    mqttClient.onPublish(onMqttPublish);
     mqttClient.setServer(MQTT_HOST, MQTT_PORT);
 
+    //TODO: using this way we can pass class method as calbackfuntion instead of making static. check the scope
+    //mqttClient.onConnect(std::bind(&Async_MQTT::l,this));
+
+#if ASYNC_TCP_SSL_ENABLED
+    mqttClient.setSecure(MQTT_SECURE);
+    if (MQTT_SECURE)
+    {
+        mqttClient.addServerFingerprint((const uint8_t[])MQTT_SERVER_FINGERPRINT);
+    }
+#endif
     connectToWifi();
 }
 
@@ -123,3 +155,24 @@ void Async_MQTT::mqtt_setup()
 void Async_MQTT::mqtt_loop()
 {
 }
+#ifdef ESP32
+void Async_MQTT::WiFiEvent(WiFiEvent_t event)
+{
+    Serial.printf("[WiFi-event] event: %d\n", event);
+    switch (event)
+    {
+    case SYSTEM_EVENT_STA_GOT_IP:
+        Serial.println("WiFi connected");
+        Serial.println("IP address: ");
+        Serial.println(WiFi.localIP());
+        connectToMqtt();
+        break;
+    case SYSTEM_EVENT_STA_DISCONNECTED:
+        Serial.println("WiFi lost connection");
+        xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
+        xTimerStart(wifiReconnectTimer, 0);
+        break;
+    }
+}
+
+#endif
