@@ -1,3 +1,4 @@
+
 //#include <ArduinoJson.h> //https://github.com/bblanchon/ArduinoJson
 #include "Util.h"
 
@@ -20,10 +21,13 @@ bool CallWiFiManager(bool isNew)
         delay(5000);
     }
     //if you get here you have connected to the WiFi
-    WeMo::wifiConnected = true;
     Serial.println("local ip");
     Serial.println(WiFi.localIP());
-    return WeMo::wifiConnected;
+
+#ifdef WEMO_SWITCH
+    WeMo::wifiConnected = true;
+#endif
+    return true;
 }
 
 /**Reading Config File*/
@@ -97,7 +101,8 @@ bool saveConfiguration()
         {
             Serial.println(F("Failed to write to file"));
             return false;
-        }Serial.println("file saved");
+        }
+        Serial.println("file saved");
         // Close the file
         file.close();
         return true;
@@ -142,7 +147,6 @@ void printFile(const char *filename)
     }
 }
 
-
 //Saving Spefic Setting
 bool saveRelayConfiguration(String sName, int value, String sName2, bool value2)
 {
@@ -162,14 +166,15 @@ bool saveRelayConfiguration(String sName, int value, String sName2, bool value2)
             return false;
         }
         StaticJsonDocument<256> doc;
-        doc[sName]=value;
-        doc[sName2]=value2;
+        doc[sName] = value;
+        doc[sName2] = value2;
         // Serialize JSON to file
         if (serializeJson(doc, file) == 0)
         {
             Serial.println(F("Failed to write to file"));
             return false;
-        }Serial.println("file saved");
+        }
+        Serial.println("file saved");
         // Close the file
         file.close();
         return true;

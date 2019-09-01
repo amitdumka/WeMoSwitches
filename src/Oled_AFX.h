@@ -1,11 +1,17 @@
 #ifndef OLED_AFX_H
 #define OLED_AFX_H
 
+
 #include <Arduino.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
 #include <SPI.h>
 #include <Wire.h>
+
+#ifdef OLED_H
+#error "Only oled or oled_afx can be used"
+#endif
+
 
 //pinOut
 // OLED VCC - NodeMCU 3v3
