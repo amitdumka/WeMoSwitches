@@ -1,16 +1,18 @@
 #include "Temp.h"
 
 //Default:
-int Tempature::DHTPin = 5;
-int Tempature::DHTType = DHT11;
+int Tempatures::DHTPin = D4;
+int Tempatures::DHTType = DHT11;
 
-Tempature::Tempature(int pin, int senType)
+Tempatures::Tempatures(int pin, int senType)
 {
     DHTPin = pin;
     DHTType = senType;
     dht= DHT(DHTPin, DHTType);
+    dht.begin();
 }
-float Tempature::ReadDHTSenor(){
+
+float Tempatures::ReadDHTSenor(){
     Humidity = dht.readHumidity();
     Temp_C = dht.readTemperature();
     if (isnan(Humidity) ||isnan(Temp_C))
@@ -33,7 +35,7 @@ float Tempature::ReadDHTSenor(){
     
 
 }
-float Tempature::readDHTHumidity()
+float Tempatures::readDHTHumidity()
 {
     Humidity = dht.readHumidity();
     if (isnan(Humidity))
@@ -48,7 +50,7 @@ float Tempature::readDHTHumidity()
     }
 }
 
-float Tempature::readDHTTemperature()
+float Tempatures::readDHTTemperature()
 {
     Temp_C = dht.readTemperature();
     
@@ -64,7 +66,7 @@ float Tempature::readDHTTemperature()
     }
 }
 
-float Tempature::readDHTHeatIndex(){
+float Tempatures::readDHTHeatIndex(){
     readDHTHumidity();readDHTTemperature();
     HeatIndex = dht.computeHeatIndex(Temp_C, Humidity, false); // Compute heat index in Celsius
     return HeatIndex;

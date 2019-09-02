@@ -7,7 +7,7 @@
 #include <Hash.h>
 //#include <DHT.h>
 
-class Tempature
+class Tempatures
 {
 
 private:
@@ -21,7 +21,7 @@ public:
     static float Humidity;
     static float HeatIndex;
 
-    Tempature(int pin, int senType);
+    Tempatures(int pin, int senType);
     float readDHTHumidity();
 
     float readDHTTemperature();

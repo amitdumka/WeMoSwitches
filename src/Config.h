@@ -2,7 +2,7 @@
 // Device Type can be marked here 
 //Config Here
 
-//#define WEMO_SWITCH ;
+#define WEMO_SWITCH ;
 #define WEMOS ; //Wemos switch 
 #define WeatherStation ;// Weather station 
 #define SENSOR ; // Sensor 
