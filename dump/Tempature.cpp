@@ -1,4 +1,4 @@
-#include "Temp.h"
+#include "Tempature.h"
 
 //Default:
 int Tempatures::DHTPin = D4;
