@@ -37,15 +37,18 @@ public:
   void InitWitty();
   void InitWitty(bool isConnected);
   void InitWitty(bool isConnected, bool isConfiged);
+  
   void SetLedDigital(int r, int g, int b);
   void SetLedAnalog(int r, int g, int b);
   bool setLedColor(int r, int g, int b);
+  
   int isButtonPressed();
   bool HandelButton(CallbackFunction cb);
+  
   bool ResetDevice();
   bool ReconnectWifi();
+  
   void LedStatus(bool isConnecte);
-
   void ButtonLoop();
 };
 

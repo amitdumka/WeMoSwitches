@@ -1,13 +1,10 @@
 #include "WemoSwitch.h"
 
-
+// implements reduces inludes files , reduce repeated task 
 //<<constructor>>
 WeMoSwitch::WeMoSwitch()
 {
-
-  
-  
-  if (!WeMo::wifiConnected)
+    if (!WeMo::wifiConnected)
     Serial.println("Wifi is not Connected");
 }
 

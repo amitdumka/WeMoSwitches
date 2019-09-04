@@ -42,6 +42,7 @@ void Witty::InitWitty(bool isConnected, bool isConfiged)
   }
   LedStatus(isConnected);
 }
+
 void Witty::InitWitty(bool isConnected)
 {
   //Wity Init
@@ -132,7 +133,8 @@ void Witty::LedStatus(bool isConnected)
   }
 }
 
-void Witty::ButtonLoop(){
+void Witty::ButtonLoop()
+{
   // When Inbuilt flash Button is pressed , It will trigger Esp reset
   if (isButtonPressed() == LOW)
   {
@@ -142,5 +144,4 @@ void Witty::ButtonLoop(){
     ResetDevice();
     delay(200);
   }
-
 }
