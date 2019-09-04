@@ -1,5 +1,5 @@
-#ifndef TEMP_H
-#define TEMP_H
+#ifndef TEMPATURES_H
+#define TEMPATURES_H
 
  #include <Adafruit_Sensor.h>
 #include <dht.h>
