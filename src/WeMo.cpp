@@ -1,8 +1,9 @@
 #include "WeMo.h"
 
-const String WeMo::Activation_Code = "Att01@24";
+const String WeMo::Activation_Code = "Att01@24";  //activation Code
 
 #ifdef NODEMCU
+
 String WeMo::RelayNames[] = {"Switch 1", "Switch 2", "Switch 3", "Switch 4"};
 int WeMo::RelayPins[] = {19, 10, 13, 16};
 bool WeMo::isRelayOn[] = {false, false, false, false};
@@ -21,52 +22,38 @@ int WeMo::RelayPort[] = {81, 82, 83, 84};
 #ifdef WITTY
 
 #ifndef RetroSwitch
-String WeMo::RelayNames[] = {
-    "Switch 1",
-    "Switch 2",
-    "Switch 3",
-}; // "Switch 4"};
+String WeMo::RelayNames[] = {"Switch 1",  "Switch 2", "Switch 3"}; 
 int WeMo::RelayStatus[] = {0, 0, 0};
-int WeMo::RelayPins[] = {
-    0,
-    0,
-    0,
-};
+int WeMo::RelayPins[] = {0, 0, 0};
 int WeMo::RelayPort[] = {81, 82, 83};
 bool WeMo::isRelayOn[] = {false, false, false};
-#else
-String WeMo::RelayNames[] = {
-    "Switch 1",
-    "Switch 2"};
-int WeMo::RelayStatus[] = {
-    0,
-    0,
-};
-int WeMo::RelayPins[] = {
 
-    0,
-    0,
-};
-int WeMo::RelayPort[] = {
-    81,
-    82,
-};
+#else
+
+String WeMo::RelayNames[] = { "Switch 1", "Switch 2" };
+int WeMo::RelayStatus[] = { 0, 0};
+int WeMo::RelayPins[] = {0, 0};
+int WeMo::RelayPort[] = { 81,82};
 bool WeMo::isRelayOn[] = {false, false};
 #endif
+
 #endif
 
 #ifdef ESP32
 // Its Better to Hard code here rather then calling function to do , it will save time and memory use and response time will be fast
-String WeMo::RelayNames[] = {"Switch 1", "Switch 2", "Switch 3", "Switch 4", "Switch 1", "Switch 2", "Switch 3", "Switch 4"};
+String WeMo::RelayNames[] = {"Switch 1", "Switch 2", "Switch 3", "Switch 4", "Switch 5", "Switch 6", "Switch 7", "Switch 8"};
 int WeMo::RelayPins[] = {0, 0, 0, 0, 0, 0, 0, 0};
 bool WeMo::isRelayOn[] = {false, false, false, false, false, false, false, false};
+
 #ifdef RetroSwitch
 int WeMo::RelayInputPin[] = {0, 0, 0, 0, 0, 0, 0, 0};
 int WeMo::RelayStatus[] = {0, 0, 0, 0, 0, 0, 0, 0};
 #endif
+
 #ifdef Alexa
 int WeMo::RelayPort[] = {0, 0, 0, 0, 0, 0, 0, 0};
 #endif
+
 #endif
 
 //Config
@@ -85,7 +72,7 @@ bool WeMo::isAPRequired = false;
 // Unqiue Id. Can be used to know different devices on network
 const double WeMo::Device_Id = 67861;
 
-const String WeMo::AP_Name = "Amit_IOT_" + String(WeMo::Device_Id);
+const String WeMo::AP_Name = "Amit_IOT_" + String(WeMo::Device_Id);  // Use Host name here 
 
 //Change this based on requirement
 
@@ -117,6 +104,7 @@ void WeMo::SetUpRelaySwitch()
 
     pinMode(WeMo::InBuilt_Led, OUTPUT); //InBuilt LED  D4/02 ESP12
 }
+
 #ifdef RetroSwitch
 //Setup Input pin mode Check for uses and way
 void WeMo::SetUpRetroSwitch()
@@ -149,8 +137,6 @@ void WeMo::WeMoRetroSwitchLoop()
 
  void WeMo::ProcessProcessConfigData()
 {
-    //Serial.begin(115200); // Can be increase based on board
-
     //Load Config File
     if (!ReadConfigFile())
     { //SaVe ConfigFile

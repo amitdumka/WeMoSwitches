@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include "Config.h"
+#define NOEMCU_VERSION 1;
 
 class WeMo_NodeMCU
 {

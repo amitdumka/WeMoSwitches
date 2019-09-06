@@ -17,6 +17,7 @@ WeMo_Main weMoMain;
 
 void setup()
 {
+
   Serial.begin(115200);
   CallWiFiManager(false); //Call to connect to Wifi NetWork;
 
@@ -33,6 +34,7 @@ void setup()
 void loop()
 {
   FirmwareUpdater::UpdaterLooper();
+
 #ifdef WEMO_SWITCH
   weMoMain.CallInLoop();
 #endif

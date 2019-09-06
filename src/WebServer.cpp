@@ -1,5 +1,6 @@
 #include "WebServer.h"
 
+// Define timeout time in milliseconds (example: 2000ms = 2s)
 const long WebServer::timeoutTime = 2000;
 
 bool WebServer::StartWebServer()
@@ -19,6 +20,9 @@ WebServer::WebServer(int port)
 {
   server = new WiFiServer(port);
 }
+WebServer::~WebServer(){
+  delete(server);// Freeing memory 
+}
 
 //WiFiServer based
 
@@ -31,19 +35,25 @@ void WebServer::EndDoc(WiFiClient client)
 void WebServer::AddButton(String switchName, bool outputState, int index, WiFiClient client)
 {
   // Display current state, and ON/OFF buttons for Switch
-  client.print(switchName + " - State "  );
-  client.print(outputState?"on":"off"  );
+  client.print(switchName + " - State " +outputState?"on":"off"   );
+ // client.print(outputState?"on":"off"  );
   if (!outputState )
   {
-    client.print("<br><a href=\"/");
-    client.print(index);
-    client.println("/on\"><button class=\"button\">ON</button></a>");
+    //client.print("<br><a href=\"/");
+    //client.print(index);
+    //client.println("/on\"><button class=\"button\">ON</button></a>");
+    
+    client.print("<br><a href=\"/"+String(index)+"/on\"><button class=\"button\">ON</button></a>");
+    
   }
   else
   {
-    client.print("<br><a href=\"/");
-    client.print(index);
-    client.println("/off\"><button class=\"button button2\">OFF</button></a>");
+    //client.print("<br><a href=\"/");
+    //client.print(index);
+    //client.println("/off\"><button class=\"button button2\">OFF</button></a>");
+    
+    client.print("<br><a href=\"/"+String(index)+"/off\"><button class=\"button button2\">OFF</button></a>");
+    
   }
 }
 

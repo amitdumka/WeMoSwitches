@@ -19,3 +19,37 @@
 #define WEBAPI ;      // Enabling WebApi to control Switches and board .. In version 2.0
 #define ASYNC_TCP_SSL_ENABLED  1 //  SSL MQT
 // Config ends here
+
+//Device Configuration for Hardware Specific
+#define _DEVICE_ID   420430 ; 
+#define _ACTIVATION_CODE Life@124;
+
+#define MAX_NO_RELAY 10;
+#define NO_OF_RELAY 4;
+#define NO_OF_SWITCH 4;
+#define IS_RETRO_SWITCH 1; // True 1 , false 0
+#define SWITCH_PIN_ARRAY ={1,2,3,5};// Input pin
+#define RELAY_PIN_ARRAY={1,2,3,5}; // OutPut Pin;
+
+#define ENABLE_IN_BUILT_LED 0; // 1 enable ; 0 disable
+#define IN_BUILT_LED_PIN D4;  // Mention Pin for In built Led , harware specific. 
+
+#define _SSID_ "AMIT_IOT";
+#define _SSID_PASSWORD "12345678";
+#define _HOST_ "AMITIOT_DEVICE";
+#define WebServer_HTTP_Port 80;
+#define WebServer_HTTPS_Port  443;
+
+#ifdef Alexa
+  #define Start_Port  81;
+  #define Last_Port  90; //Max Switch /Replay can be handle by Alexa WeMos
+#endif
+
+//Static IPaddress; 
+
+  #define IPAddress_IP;
+  #define IPAddress_GW;
+  #define IPAddress_SN;
+
+
+

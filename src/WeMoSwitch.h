@@ -7,24 +7,23 @@
 #include "switch.h"
 #include "UpnpBroadcastResponder.h"
 #include "CallbackFunction.h"
-//#include "WebServer.h"
 #include "WeMo.h"
 #include"Util.h"
-//#include "SmartSwitch.h"
 
 class WeMoSwitch
 {
 private:
   int counter = 10;
-  //const int SwitchCount=WeMo::NoOfRelay;
   Switch *relaySwitch[WeMo::NoOfRelay];
   UpnpBroadcastResponder upnpBroadcastResponder;
+
  //Callback function for On/Off
 static bool SwitchOn(int );
 static bool SwitchOff(int);
 
 
  public:
+
   // Main Functions
   bool initWemoSwitch();
   void wemoSwitchLoop();

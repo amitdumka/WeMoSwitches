@@ -185,3 +185,11 @@ bool saveRelayConfiguration(String sName, int value, String sName2, bool value2)
         return false;
     }
 }
+
+// Board Defination
+//TODO: Implement
+bool Board::isWiFiConnected = false;
+bool Board::CallWiFiManager(bool isNew) {}
+bool Board::ReadConfigFile() { return false; }
+bool Board::SaveConfigFile() { return false; }
+bool Board::PrintFile(const char *filename) { return false; }

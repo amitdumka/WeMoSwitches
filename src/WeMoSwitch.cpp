@@ -17,7 +17,8 @@ WeMoSwitch::~WeMoSwitch()
 //Init Function , Must me called in Setup function
 bool WeMoSwitch::initWemoSwitch()
 {
-  Serial.println("Initization of WemoSwitch box begin");
+  Serial.println("Initization of WemoSwitch With Alexa Support begin");
+  
   if (WeMo::wifiConnected)
   {
     upnpBroadcastResponder.beginUdpMulticast();
@@ -65,7 +66,7 @@ void WeMoSwitch::wemoSwitchLoop()
 
 bool WeMoSwitch::SwitchOff(int index)
 {
-  Serial.print(" Turning Off Switch");Serial.println(index + 1);
+  Serial.println(" Turning Off Switch"+String(index+1));//Serial.println(index + 1);
   WeMo::isRelayOn[index] = false;
   WeMo::OperateRelay(index, LOW);
   saveRelayConfiguration(WeMo::RelayNames[index], 0, WeMo::RelayNames[index] + index, false);
@@ -74,13 +75,11 @@ bool WeMoSwitch::SwitchOff(int index)
 
 bool WeMoSwitch::SwitchOn(int index)
 {
-  Serial.print(" Turning ON Switch");Serial.println(index + 1);
+  Serial.println(" Turning ON Switch"+String(index+1));//Serial.println(index + 1);
   WeMo::isRelayOn[index] = true;
   WeMo::OperateRelay(index, HIGH);
   saveRelayConfiguration(WeMo::RelayNames[index], 1, WeMo::RelayNames[index] + index, true);
   return WeMo::isRelayOn[index];
 }
 
-
-
-
+// SaveRelayConfiguration need to be changed to accomodate for Retro Switch mode. 

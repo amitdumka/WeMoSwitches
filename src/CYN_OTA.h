@@ -8,13 +8,10 @@
 class FirmwareUpdater
 {
     private: 
-   static const int PORT_NO;//= 7735;
-    //const String UserName="AMIT_IOT_ADMIN";
-    static const String PassWord;//="LifeLine@500";
+   static const int PORT_NO;
+    static const String PassWord;
 
     public:
-    //FirmwareUpdater();
-
    static void UpdaterInstaller();
    static void UpdaterLooper();
 

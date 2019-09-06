@@ -7,7 +7,7 @@ IPAddress ipMulti(239, 255, 255, 250);
 const unsigned int portMulti = 1900;
 char packetBuffer[UDP_TX_PACKET_MAX_SIZE];
 
-#define MAX_SWITCHES 14
+#define MAX_SWITCHES 14  // move to config file
 Switch switches[MAX_SWITCHES] = {};
 int numOfSwitchs = 0;
 

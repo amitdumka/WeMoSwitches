@@ -98,12 +98,11 @@ void WeMo_Main::CallInSetUp()
     webServer = new WebServer(80);
     webServer->StartWebServer();
 #endif
-    if (MDNS.begin("amitiot"))
+    if (MDNS.begin("amitiot"))  // Use Host name
     {
         Serial.println("MDNS responder started: amitiot");
         MDNS.addService("http", "tcp", 80);         // Add service to MDNS-SD
     }
-
     Serial.println(ESP.getChipId());
     Serial1.println(ESP.getFlashChipId());
     Serial.println(ESP8266_CLOCK);
@@ -136,4 +135,5 @@ void WeMo_Main::CallInLoop()
 #ifdef WITTY
     wittyB.ButtonLoop();
 #endif
+
 }

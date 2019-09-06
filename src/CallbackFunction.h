@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+// List of Callback functions
+
 typedef bool (*CallbackFunctionIn)(int index);
 typedef bool (*CallbackFunction)();
 

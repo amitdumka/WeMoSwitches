@@ -5,7 +5,7 @@
 #include "Util.h"
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-
+// Version 1.2
 class WeMo
 {
   private: 
@@ -13,7 +13,8 @@ class WeMo
   static const String Activation_Code;
 
 public:
-  
+  //No of Relay and Switch can be define on Config File also and here just create Single Function.
+  //Target for Version 2.0
 #ifdef NODEMCU
   static const int NoOfRelay = 4; // Change based on project
 #ifdef RetroSwitch
@@ -45,9 +46,11 @@ public:
   static int RelayPins[];
   static String RelayNames[];
   static bool isRelayOn[];
+
 #ifdef Alexa
   static int RelayPort[]; //For Alexa Support;
 #endif
+  
   //Use both Inbuilt led
   static const int InBuilt_Led = D4; // Led at esp 12 chip  and Inbuilt nodemcu is at D0 or gpio 16
 
@@ -64,6 +67,7 @@ public:
   static const int StartPort = 81;
   static const int LastPort = 90; //Max Switch /Replay can be handle by Alexa WeMos
 #endif
+
   static bool isAPOn;
   static bool isAPRequired;
   static const String AP_Name;
